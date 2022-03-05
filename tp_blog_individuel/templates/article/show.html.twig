@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article
+{% endblock %}
+
+{% block body %}
+	<div class="card text-white bg-primary mb-3">
+		<div class="card-body">
+			<h1 class="card-title">{{ article.titre }}</h1>
+
+			<p class="card-text">
+				Article écrit le
+				<span class="fw-bold">{{ article.dateCreation ? article.dateCreation|date('d/m/Y à H:i:s') : '' }}</span>
+				par
+				<span class="fw-bold">{{ article.auteur }}</span>.
+			</p>
+
+			<p>{{ article.contenu }}</p>
+		</div>
+	</div>
+
+
+	{% if app.user %}
+		<h3>Nouveau commentaire:</h3>
+		{{form(commentaire_form)}}{% endif %}
+
+		<h3>Commentaires:</h3>
+		<p>
+			{% for commentaire in article.commentaires %}
+				<p>écrit par
+					<span class="fw-bold">{{commentaire.auteur}}</span>
+					le
+					<span class="fw-bold">{{commentaire.dateCreation ? commentaire.dateCreation|date('d/m/Y à H:i:s') : ''}}</span>
+					:
+					{% if commentaire.validation %}
+						<br>&nbsp;&nbsp;&nbsp;{{commentaire.contenu}}
+
+					{% else %}
+						<br>&nbsp;&nbsp;&nbsp;<span class="fst-italic">
+							*Commentaire en cours de validation*</span>
+					{% endif %}
+				</p>
+
+
+			{% else %}
+				<br>&nbsp;&nbsp;&nbsp;<span class="fst-italic">
+					*Aucun commentaire pour le moment!*</span>
+			{% endfor %}
+		</p>
+
+
+		<a href="{{ path('app_article_index') }}">back to list</a>
+
+
+		{% if is_granted(constant('App\\Entity\\Utilisateur::ROLE_ADMIN')) %}
+			<a href="{{ path('app_article_edit', {'id': article.id}) }}">edit</a>
+		{% endif %}
+
+		{% if is_granted(constant('App\\Entity\\Utilisateur::ROLE_ADMIN')) %}
+			{{ include('article/_delete_form.html.twig') }}
+		{% endif %}
+
+	{% endblock %}

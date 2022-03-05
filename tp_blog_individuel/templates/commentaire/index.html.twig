@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commentaire index
+{% endblock %}
+
+{% block body %}
+	<h1>Commentaire index</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Article</th>
+				<th>Commentaire</th>
+				<th>Date_creation</th>
+				<th>Validation</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for commentaire in commentaires %}
+				<tr>
+					<td>{{ commentaire.id }}</td>
+					<td>{{ commentaire.article.titre|slice(0, 27)}}...</td>
+					<td>{{ commentaire.contenu|slice(0, 27)}}...</td>
+					<td>{{ commentaire.dateCreation ? commentaire.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
+					<td>
+						{% if commentaire.validation  %}
+							Commentaire validé
+						{% else %}
+							Commentaire à modérer
+						{% endif %}
+
+					</td>
+					<td>
+						<a href="{{ path('app_commentaire_show', {'id': commentaire.id}) }}">show</a>
+						<a href="{{ path('app_commentaire_edit', {'id': commentaire.id}) }}">edit</a>
+                        <a href="{{ path('app_commentaire_valid', {'id': commentaire.id}) }}">validation</a>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="4">no records found</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	{# <a href="{{ path('app_commentaire_new') }}">Create new</a> #}
+{% endblock %}
